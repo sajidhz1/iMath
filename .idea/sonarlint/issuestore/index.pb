@@ -1,0 +1,19 @@
+
+P
+ app/src/main/AndroidManifest.xml,8\c\8c55c3ccc257e5907959013f99656e4c8ec3903e
+q
+Aapp/src/main/java/com/zone/interactivemath/model/ChatAppMsgDTO.kt,2\e\2e05eb6a9a6c960d3d6d34f7c09c332650715802
+x
+Happ/src/main/java/com/zone/interactivemath/adapters/ChatAppMsgAdapter.kt,2\0\2012186ba09e1c4ad3778ec0a9752ee118e26ead
+„
+Tapp/src/main/java/com/zone/interactivemath/adapters/LessionSelectionSimpleAdapter.kt,7\9\79bad4fd0d6f8a4c7ceb49c0d82f772ac724cf07
+{
+Kapp/src/main/java/com/zone/interactivemath/adapters/ChatAppMsgViewHolder.kt,4\b\4b0633cc7e68526d4d0081e66b2349b905b06e89
+j
+:app/src/main/java/com/zone/interactivemath/MainActivity.kt,9\0\9077cee9198484d8479a56bcad4d9268526a88cf
+q
+Aapp/src/main/java/com/zone/interactivemath/RequestJavaV2Task.java,4\d\4db8017eb7438533b64304404ca1346af413b8b6
+o
+?app/src/main/java/com/zone/interactivemath/ListeningActivity.kt,6\f\6f6923deac0be0bb4fcc31b06e52a396ff0c0b35
+@
+app/build.gradle,f\4\f4a01d6a4fcb971362ec00a83903fd3902f52164
