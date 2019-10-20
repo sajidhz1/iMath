@@ -32,6 +32,7 @@ import ai.api.android.AIDataService;
 import ai.api.model.AIRequest;
 import ai.api.model.AIResponse;
 import android.speech.tts.TextToSpeech
+import com.airbnb.lottie.LottieAnimationView
 import com.google.api.gax.core.FixedCredentialsProvider
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.auth.oauth2.ServiceAccountCredentials
@@ -44,7 +45,7 @@ class ListeningActivity : Activity(), RecognitionListener {
 
     private val REQUEST_RECORD_PERMISSION = 100
 //    private var txtSpeechInput: TextView? = null
-    private var btnSpeak: ImageButton? = null
+    private var btnSpeak: LottieAnimationView? = null
     private val REQ_CODE_SPEECH_INPUT = 100
     private var speech: SpeechRecognizer? = null
     private var recognizerIntent: Intent? = null
@@ -81,7 +82,7 @@ class ListeningActivity : Activity(), RecognitionListener {
 
 //        txtSpeechInput = findViewById(R.id.txtSpeechInput) as TextView
         listeningInput = findViewById(R.id.listening_text) as TextView
-        btnSpeak = findViewById(R.id.btnSpeak) as ImageButton
+        btnSpeak = findViewById(R.id.btnSpeak) as LottieAnimationView
 
         actionBar?.hide()
 
