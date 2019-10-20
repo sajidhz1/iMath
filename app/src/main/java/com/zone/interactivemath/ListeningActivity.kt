@@ -32,7 +32,6 @@ import ai.api.android.AIDataService;
 import ai.api.model.AIRequest;
 import ai.api.model.AIResponse;
 import android.speech.tts.TextToSpeech
-import com.airbnb.lottie.LottieAnimationView
 import com.google.api.gax.core.FixedCredentialsProvider
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.auth.oauth2.ServiceAccountCredentials
@@ -45,7 +44,7 @@ class ListeningActivity : Activity(), RecognitionListener {
 
     private val REQUEST_RECORD_PERMISSION = 100
 //    private var txtSpeechInput: TextView? = null
-    private var btnSpeak: LottieAnimationView? = null
+    private var btnSpeak: ImageButton? = null
     private val REQ_CODE_SPEECH_INPUT = 100
     private var speech: SpeechRecognizer? = null
     private var recognizerIntent: Intent? = null
@@ -82,14 +81,14 @@ class ListeningActivity : Activity(), RecognitionListener {
 
 //        txtSpeechInput = findViewById(R.id.txtSpeechInput) as TextView
         listeningInput = findViewById(R.id.listening_text) as TextView
-        btnSpeak = findViewById(R.id.btnSpeak) as LottieAnimationView
+        btnSpeak = findViewById(R.id.btnSpeak) as ImageButton
 
         actionBar?.hide()
 
-        speech = SpeechRecognizer.createSpeechRecognizer(this);
+        speech = SpeechRecognizer.createSpeechRecognizer(this)
 //        Log.i(LOG_TAG, "isRecognitionAvailable: " + SpeechRecognizer.isRecognitionAvailable(this));
         speech?.setRecognitionListener(this);
-        recognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        recognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         recognizerIntent?.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE,
             "en");
         recognizerIntent?.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -104,7 +103,6 @@ class ListeningActivity : Activity(), RecognitionListener {
                     keepListening = true
                 }else{
                     keepListening = false
-                    showMicIcon()
                     speech?.stopListening()
                     listeningInput!!.text = "Tap on mic to speak"
                 }
@@ -128,10 +126,12 @@ class ListeningActivity : Activity(), RecognitionListener {
         val chatAppMsgAdapter = ChatAppMsgAdapter(msgDtoList)
         // Set data adapter to RecyclerView.
         msgRecyclerView?.adapter = chatAppMsgAdapter
+        try {
+            initV2Chatbot()
+        }catch(e: Exception){
 
-        initV2Chatbot()
+        }
 
-        //showMicIcon()
     }
 
     private fun initV2Chatbot() {
@@ -158,7 +158,11 @@ class ListeningActivity : Activity(), RecognitionListener {
             lastIntent = response.queryResult.intent.displayName
 
             if(lastIntent.equals("Greeting")){
-                sendMessagetoBot("initiate question")
+                sendMessagetoBot("initiate-question")
+            }
+
+            if(lastIntent.equals("answer")){
+                sendMessagetoBot("next-question q"+(questionCount));
             }
             Log.d(TAG, "V2 Bot Reply: $botReply")
             val msgDto = ChatAppMsgDTO(ChatAppMsgDTO.MSG_TYPE_RECEIVED, botReply)
@@ -167,7 +171,6 @@ class ListeningActivity : Activity(), RecognitionListener {
 
             if(keepListening){
                 speech?.startListening(recognizerIntent)
-                showProgressIcon()
             }
 
         } else {
@@ -184,27 +187,6 @@ class ListeningActivity : Activity(), RecognitionListener {
           super.onPause();
      }
 
-
-    fun showProgressIcon() {
-        btnSpeak?.setAnimation(AnimationConstants.SEARCH_BAR_LISTENING)
-        btnSpeak?.playAnimation()
-    }
-
-    /**
-     * Show Kohls Icon
-     */
-    fun showKohlsIcon() {
-        btnSpeak?.setAnimation(AnimationConstants.USER_SPEAKING_ANIM)
-        btnSpeak?.setFrame(0)
-    }
-
-    /**
-     * Show Mic Icon
-     */
-    fun showMicIcon() {
-        btnSpeak?.setAnimation(AnimationConstants.USER_SPEAKING_ANIM)
-        btnSpeak?.playAnimation()
-    }
 
     /**
      * Receiving speech input
@@ -228,7 +210,6 @@ class ListeningActivity : Activity(), RecognitionListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             REQUEST_RECORD_PERMISSION -> if (grantResults.size > 0 && grantResults[0] === PackageManager.PERMISSION_GRANTED) {
-                showProgressIcon()
                 speech?.startListening(recognizerIntent)
             } else {
                 Toast.makeText(
@@ -285,7 +266,6 @@ class ListeningActivity : Activity(), RecognitionListener {
         if (matches != null) {
 
             if(keepListening){
-                showMicIcon()
                 speech?.stopListening()
             }
 
@@ -293,17 +273,17 @@ class ListeningActivity : Activity(), RecognitionListener {
             msgDtoList.add(msgDto)
             msgRecyclerView?.adapter?.notifyItemInserted(msgDtoList.size - 1)
 
-
-            if(!lastIntent.isNullOrEmpty() && (lastIntent.equals("help") || lastIntent.equals("answer") || lastIntent.equals("solve"))) {
+            if(!lastIntent.isNullOrEmpty() && (lastIntent.equals("next-question") || lastIntent.equals("start-question") || lastIntent.equals("help") || lastIntent.equals("answer") || lastIntent.equals("solve"))) {
                 sendMessagetoBot(matches[0]+" q"+questionCount)
+                Log.d("==================count",""+questionCount)
             }
             else{
                 sendMessagetoBot(matches[0])
             }
-            questionCount++
+            if(lastIntent == "start-question" || lastIntent == "next-question")
+                questionCount++
         }
         if(keepListening){
-            showProgressIcon()
             speech?.startListening(recognizerIntent)
         }
     }
@@ -311,7 +291,6 @@ class ListeningActivity : Activity(), RecognitionListener {
     fun sendMessagetoBot(message: String){
         val queryInput =
             QueryInput.newBuilder().setText(TextInput.newBuilder().setText(message).setLanguageCode("en-US")).build()
-        Log.d("====message===",queryInput.toString())
         RequestJavaV2Task(this@ListeningActivity, session, sessionsClient, queryInput).execute()
     }
 
